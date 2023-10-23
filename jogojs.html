@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jogo da Forca</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2em;
+        }
+
+        #word {
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+
+        #letters, #chances {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        #result {
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jogo da Forca</h1>
+    <div id="word"></div>
+    <div id="letters"></div>
+    <div id="chances">Chances restantes: <span id="chanceCount">6</span></div>
+    <div id="result" class="hidden"></div>
+
+    <script>
+        // Lista de palavras para o jogo
+        var words = ["bhascara", "literatura", "enem", "vestibular", "prova", "mamifero", "biologia", "logaritmo",
+                    "porcentagem", "Nazismo", "facismo", "gramatica", "genetica", "estequimiotria", "estatistica",
+                     "redacao", "guerra Fria", "geopolitica", "sociologia", "filosofia", ];
+        
+        // Escolhe uma palavra aleatória da lista
+        var selectedWord = words[Math.floor(Math.random() * words.length)];
+        
+        // Array para armazenar a palavra oculta
+        var hiddenWord = [];
+        
+        // Array para armazenar as letras usadas
+        var usedLetters = [];
+        
+        // Número de chances restantes
+        var chances = 6;
+
+        // Função para inicializar o jogo
+        function initializeGame() {
+            for (var i = 0; i < selectedWord.length; i++) {
+                hiddenWord.push("_");
+            }
+
+            updateDisplay();
+        }
+
+        // Função para atualizar a interface do jogo
+        function updateDisplay() {
+            document.getElementById("word").textContent = hiddenWord.join(" ");
+            document.getElementById("letters").textContent = "Letras utilizadas: " + usedLetters.join(", ");
+            document.getElementById("chanceCount").textContent = chances;
+        }
+
+        // Função para verificar se a letra é correta
+        function checkLetter(letter) {
+            if (usedLetters.includes(letter)) {
+                alert("Você já usou essa letra!");
+                return;
+            }
+
+            usedLetters.push(letter);
+
+            if (selectedWord.includes(letter)) {
+                for (var i = 0; i < selectedWord.length; i++) {
+                    if (selectedWord[i] === letter) {
+                        hiddenWord[i] = letter;
+                    }
+                }
+            } else {
+                chances--;
+            }
+
+            if (chances === 0) {
+                document.getElementById("result").textContent = "Você perdeu! A palavra era: " + selectedWord;
+                document.getElementById("result").classList.remove("hidden");
+            } else if (!hiddenWord.includes("_")) {
+                document.getElementById("result").textContent = "Parabéns, você venceu!";
+                document.getElementById("result").classList.remove("hidden");
+            }
+
+            updateDisplay();
+        }
+
+        // Aguarda o carregamento completo da página
+        document.addEventListener("DOMContentLoaded", function() {
+            initializeGame();
+        });
+
+        // Captura os eventos de tecla pressionada
+        document.addEventListener("keydown", function(event) {
+            var key = event.key.toLowerCase();
+            if (/^[a-zA-Z]$/.test(key)) {
+                checkLetter(key);
+            }
+        });
+    </script>
+</body>
+</html>
